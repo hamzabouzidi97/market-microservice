@@ -25,7 +25,7 @@ public class OrderService {
 
     private final WebClient.Builder webClientBuilder;
 
-    public void placeOrder(OrderRequest orderRequest) {
+    public String placeOrder(OrderRequest orderRequest) {
 
         Order order = new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
@@ -47,15 +47,14 @@ public class OrderService {
                 .retrieve()
                 .bodyToMono(InventoryResponse[].class)
                 .block();
-        boolean allProductsInStock;
-        if(Objects.nonNull(inventoryResponseArray)){
-            allProductsInStock = Arrays.stream(inventoryResponseArray).allMatch(InventoryResponse::isInStock);
+        boolean allProductsInStock = Arrays.stream(inventoryResponseArray).allMatch(InventoryResponse::isInStock);
             if (Boolean.TRUE.equals(allProductsInStock)) {
                 orderRepository.save(order);
+                return "Order placed successfully";
             } else {
                 throw new IllegalArgumentException("Product is not in stock, please try again later");
             }
-        }
+
     }
 
     private OrderLineItems mapToDto(OredrLineItemsDto oredrLineItemsDto) {
