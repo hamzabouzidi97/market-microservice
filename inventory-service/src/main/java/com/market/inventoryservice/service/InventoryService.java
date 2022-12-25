@@ -12,12 +12,10 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
 
-    @SneakyThrows
     public List<InventoryResponse> isInStock(List<String> skuCode){
         return inventoryRepository.findBySkuCodeIn(skuCode)
                 .stream()
